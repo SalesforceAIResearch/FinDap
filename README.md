@@ -7,14 +7,17 @@
 
 This is the codebase for [Demystifying Domain-adaptive Post-training for Financial LLMs](https://arxiv.org/abs/2501.04961). 
 
-Given a pre-trained LLM with strong general capabilities (e.g., Llama3-8b-instruct), how to effectively adapt it to a target domain by post-training? What criteria are desirable for successful adaptation? What are effective training recipes with respect to data and model? 
+*Given a pre-trained LLM with strong general capabilities (e.g., Llama3-8b-instruct), how to effectively adapt it to a target domain by post-training? What criteria are desirable for successful adaptation? What are effective training recipes with respect to data and model?*
 
 ✨ FinDAP a novel finance-specific post-training framework comprising a comprehensive evaluation framework, state-of-the-art model checkpoints and a training recipe. We use the finance domain as a case study to perform domain-adaptive post-training on the instruction-tuned LLM
 
 <p align="center">
     <img src="./assets/overview_findap.png" width="80%"> <br>
-An overview of FinDAP. Left: we first identify the core expected capabilities for the target domain and then curate texts and prompts for training and evaluation. Right: the top shows our training strategies. For each training stage, we use development set to select the best model. After training, we use unseen set to demonstrate the effectiveness of Llama-Fin.
+An overview of FinDAP. <strong>Left</strong>: we first identify the core expected capabilities for the target domain and then curate texts and prompts for training and evaluation. <strong>Right</strong>: the top shows our training strategies. For each training stage, we use development set to select the best model. After training, we use unseen set to demonstrate the effectiveness of the post-trained LLM.
 </p>
+
+## Updates
+- Jan 26: Evaluation benchmark (<strong>FinEval</strong>) is now available on [Huggingface Dataset](https://huggingface.co/datasets/Salesforce/FinEval)! More datasets and checkpoints will  be released soon.
 
 ## 💪 FinDAP Capabilities
 We begin by illustrating the capabilities that are desirable for a domain-specific LLM. Specifically, we focus on the following core capabilities: 
@@ -29,7 +32,7 @@ We begin by illustrating the capabilities that are desirable for a domain-specif
 With the above breakdown of capabilities, our evaluation framework consists of a suite for assessing these capabilities using development sets and unseen (held-out) evaluation sets. Our development set is directly split from the training data at each stage. Below Table outlines the capabilities and the evaluation benchmarks selected to cover these capabilities.
 <p align="center">
     <img src="./assets/evaluation.png" width="80%"> <br>
-Summary of FinEval. New datasets released with FinDAP are colorhighlighted for emphasis.
+Summary of FinEval. New datasets released with FinDAP are color-highlighted for emphasis.
 </p>
 
 
