@@ -36,6 +36,71 @@ Summary of FinEval. New datasets released with FinDAP are color-highlighted for 
 </p>
 
 
+### 🚀 FinEval Quick Start 
+
+
+FinEval can be easily evaluated using standard evaluation scripts. As an example, we recommend use [llm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) to load the dataset and evaluate it with minimal effort. Feel free to modify the code to integrate it with your existing evaluation scripts.
+
+Firstly, we can refer to [llm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) for installation
+```bash
+git clone --depth 1 https://github.com/EleutherAI/lm-evaluation-harness
+cd lm-evaluation-harness
+pip install -e . 
+```
+Secondly, we can change the task `.yaml` file (take `CFA-challenge` as an example):
+
+```yaml
+task: cfa-challenge
+dataset_path: Salesforce/FinEval
+dataset_name: CFA-Challenge
+output_type: generate_until
+test_split: test
+doc_to_text: query
+doc_to_target: answer
+should_decontaminate: true
+doc_to_decontamination_query: query
+generation_kwargs:
+  until:
+    - "</s>"
+    - "<|im_end|>"
+    - "<|eot_id|>"
+    - "<|end_of_text|>"
+    - "<|end|>"
+    - "<|endoftext|>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 8000
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+metadata:
+  version: 1.0
+```
+Finally, we can run the evaluation script:
+
+```bash
+
+
+huggingface-cli login --token {YOUR_HF_TOKEN}
+
+export HF_DATASETS_CACHE= {YOUR_CACHE_LOC}
+export TRANSFORMERS_CACHE= {YOUR_CACHE_LOC}
+export TRUST_REMOTE_CODE=1
+
+# Example system prompt
+system_prompt= "Please act as a CFA exam taker and evaluate the given scenario to choose the most appropriate answer from options A, B, and C. Start by offering a brief explanation of your thought process and reasoning, up to 100 words. After the explanation, select your answer using the format: 'Selection: [[A]]' (e.g., 'Explanation: (your explanation)\nSelection: [[A]]'). If you find no answer is correct, directly mention it"
+
+# Example model
+model=meta-llama/Meta-Llama-3-8B-Instruct
+
+lm_eval --apply_chat_template --model vllm --log_samples --write_out --model_args pretrained=${model},max_length=8000,dtype=bfloat16,trust_remote_code=True,tensor_parallel_size={YOUR_NUM_GPU},gpu_memory_utilization=0.6  --system_instruction "$system_prompt" --tasks cfa-challenge --device cuda --output_path {YOUR_OUTPUT_LOC} --batch_size auto --num_fewshot 0
+```
+
+
+
 ### Ethical Considerations
 This release is for research purposes only in support of an academic paper. Our datasets and code are not specifically designed or evaluated for all downstream purposes. We strongly recommend users evaluate and address potential concerns related to accuracy, safety, and fairness before model deployment. We encourage users to consider the common limitations of AI, comply with applicable laws, and leverage best practices when selecting use cases, particularly for high-risk scenarios where errors or misuse could significantly impact people’s lives, rights, or safety. For further guidance on use cases, refer to our [AUP](https://www.salesforce.com/content/dam/web/en_us/www/documents/legal/Agreements/policies/ExternalFacing_Services_Policy.pdf) and [AI AUP](https://www.salesforce.com/content/dam/web/en_us/www/documents/legal/Agreements/policies/ai-acceptable-use-policy.pdf). 
 ## Citation
